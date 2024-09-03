@@ -3,11 +3,10 @@ package fhirspark.adapter;
 import fhirspark.definitions.GenomicsReportingEnum;
 import fhirspark.definitions.UriEnum;
 import fhirspark.restmodel.ClinicalTrial;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Observation.ObservationComponentComponent;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.Observation.ObservationComponentComponent;
 
 public final class ClinicalTrialAdapter {
 

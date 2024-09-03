@@ -3,7 +3,6 @@ package fhirspark.resolver;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import fhirspark.resolver.model.Genenames;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;

@@ -6,6 +6,7 @@ import fhirspark.adapter.SpecimenAdapter;
 import fhirspark.definitions.LoincEnum;
 import fhirspark.restmodel.ClinicalDatum;
 import fhirspark.settings.Regex;
+import java.util.List;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Observation;
@@ -13,8 +14,6 @@ import org.hl7.fhir.r4.model.Observation.ObservationStatus;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.Specimen;
-
-import java.util.List;
 
 /**
  * Generic adapter for clinical data. Also fallback if other adapter was not

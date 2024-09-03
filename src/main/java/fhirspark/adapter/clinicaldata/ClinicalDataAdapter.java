@@ -3,11 +3,10 @@ package fhirspark.adapter.clinicaldata;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import fhirspark.restmodel.ClinicalDatum;
 import fhirspark.settings.Regex;
+import java.util.List;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
-
-import java.util.List;
 
 /**
  * General interface for all adapters of clinical data.

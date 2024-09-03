@@ -8,9 +8,8 @@ import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
-import org.eclipse.jetty.http.HttpStatus;
-
 import java.io.IOException;
+import org.eclipse.jetty.http.HttpStatus;
 
 /**
  * Resolves the title of a pubmed publication if it was not provided.
