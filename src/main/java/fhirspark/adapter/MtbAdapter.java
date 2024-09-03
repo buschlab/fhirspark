@@ -10,6 +10,12 @@ import fhirspark.restmodel.Mtb;
 import fhirspark.restmodel.TherapyRecommendation;
 import fhirspark.settings.Regex;
 import fhirspark.settings.Settings;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.DiagnosticReport;
@@ -26,13 +32,6 @@ import org.hl7.fhir.r4.model.Specimen;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Task.TaskIntent;
 import org.hl7.fhir.r4.model.Task.TaskStatus;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public final class MtbAdapter {
 

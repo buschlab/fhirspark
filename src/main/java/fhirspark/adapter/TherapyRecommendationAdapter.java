@@ -11,6 +11,10 @@ import fhirspark.restmodel.Reasoning;
 import fhirspark.restmodel.TherapyRecommendation;
 import fhirspark.restmodel.Treatment;
 import fhirspark.settings.Regex;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Coding;
@@ -28,11 +32,6 @@ import org.hl7.fhir.r4.model.RelatedArtifact;
 import org.hl7.fhir.r4.model.RelatedArtifact.RelatedArtifactType;
 import org.hl7.fhir.r4.model.ResearchStudy;
 import org.hl7.fhir.r4.model.codesystems.ObservationCategory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 public final class TherapyRecommendationAdapter {
 

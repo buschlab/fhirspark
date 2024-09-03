@@ -3,7 +3,6 @@ package fhirspark.resolver;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fhirspark.resolver.model.Drug;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
