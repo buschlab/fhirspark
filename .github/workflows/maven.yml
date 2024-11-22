@@ -11,7 +11,7 @@ jobs:
   build:
     services:
       hapiserver:
-        image: hapiproject/hapi:v7.4.0
+        image: hapiproject/hapi:v7.6.0
         ports:
          - 8080:8080
         env:
