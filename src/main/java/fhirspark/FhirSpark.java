@@ -93,14 +93,23 @@ public final class FhirSpark {
         */
 
         get("/mtb/:patientId/permission", (req, res) -> {
-            if (settings.getLoginRequired()
-                && (!validateRequest(req) || validateManipulation(req) > 0)) {
-                res.status(HttpStatus.FORBIDDEN_403);
-                return "Access denied.";
+            if (settings.getLoginRequired()) {
+                int perms = validateManipulation(req);
+                if (!validateRequest(req) || perms == 0) {
+                    res.status(HttpStatus.FORBIDDEN_403);
+                    return "DENIED";
+                }
+                res.status(HttpStatus.ACCEPTED_202);
+                return switch(perms) {
+                    case 1 -> "WRITE";
+                    case 2 -> "ADMIN";
+                    default -> "DENIED";
+                };
+            } else {
+                res.status(HttpStatus.ACCEPTED_202);
+                res.header("Cache-Control", "no-cache, no-store, max-age=0");
+                return "WRITE";
             }
-            res.status(HttpStatus.ACCEPTED_202);
-            res.header("Cache-Control", "no-cache, no-store, max-age=0");
-            return "WRITE";
         });
 
         get("/mtb/:patientId", (req, res) -> {
@@ -116,7 +125,7 @@ public final class FhirSpark {
 
         put("/mtb/:patientId", (req, res) -> {
             if (settings.getLoginRequired()
-                && (!validateRequest(req) || validateManipulation(req) > 0)) {
+                && (!validateRequest(req) || validateManipulation(req) == 0)) {
                 res.status(HttpStatus.FORBIDDEN_403);
                 return res;
             }
@@ -131,7 +140,7 @@ public final class FhirSpark {
 
         delete("/mtb/:patientId", (req, res) -> {
             if (settings.getLoginRequired()
-                && (!validateRequest(req) || validateManipulation(req) > 0)) {
+                && (!validateRequest(req) || validateManipulation(req) == 0)) {
                 res.status(HttpStatus.FORBIDDEN_403);
                 return res;
             }
@@ -186,7 +195,7 @@ public final class FhirSpark {
         get("/followup/:patientId/permission", (req, res) -> {
             if (settings.getLoginRequired()) {
                 int perms = validateManipulation(req);
-                if (!validateRequest(req) || perms > 0) {
+                if (!validateRequest(req) || perms == 0) {
                     res.status(HttpStatus.FORBIDDEN_403);
                     return "DENIED";
                 }
@@ -216,7 +225,7 @@ public final class FhirSpark {
 
         put("/followup/:patientId", (req, res) -> {
             if (settings.getLoginRequired()
-                && (!validateRequest(req) || validateManipulation(req) > 0)) {
+                && (!validateRequest(req) || validateManipulation(req) == 0)) {
                 res.status(HttpStatus.FORBIDDEN_403);
                 return res;
             }
@@ -230,7 +239,7 @@ public final class FhirSpark {
 
         delete("/followup/:patientId", (req, res) -> {
             if (settings.getLoginRequired()
-                && (!validateRequest(req) || validateManipulation(req) > 0)) {
+                && (!validateRequest(req) || validateManipulation(req) == 0)) {
                 res.status(HttpStatus.FORBIDDEN_403);
                 return res;
             }
