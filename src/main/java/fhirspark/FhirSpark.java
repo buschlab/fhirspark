@@ -94,13 +94,13 @@ public final class FhirSpark {
 
         get("/mtb/:patientId/permission", (req, res) -> {
             if (settings.getLoginRequired()
-                && (!validateRequest(req) || !validateManipulation(req))) {
+                && (!validateRequest(req) || validateManipulation(req) > 0)) {
                 res.status(HttpStatus.FORBIDDEN_403);
-                return res;
+                return "Access denied.";
             }
             res.status(HttpStatus.ACCEPTED_202);
             res.header("Cache-Control", "no-cache, no-store, max-age=0");
-            return res;
+            return "WRITE";
         });
 
         get("/mtb/:patientId", (req, res) -> {
@@ -116,7 +116,7 @@ public final class FhirSpark {
 
         put("/mtb/:patientId", (req, res) -> {
             if (settings.getLoginRequired()
-                && (!validateRequest(req) || !validateManipulation(req))) {
+                && (!validateRequest(req) || validateManipulation(req) > 0)) {
                 res.status(HttpStatus.FORBIDDEN_403);
                 return res;
             }
@@ -131,7 +131,7 @@ public final class FhirSpark {
 
         delete("/mtb/:patientId", (req, res) -> {
             if (settings.getLoginRequired()
-                && (!validateRequest(req) || !validateManipulation(req))) {
+                && (!validateRequest(req) || validateManipulation(req) > 0)) {
                 res.status(HttpStatus.FORBIDDEN_403);
                 return res;
             }
@@ -184,14 +184,23 @@ public final class FhirSpark {
         });
 
         get("/followup/:patientId/permission", (req, res) -> {
-            if (settings.getLoginRequired()
-                && (!validateRequest(req) || !validateManipulation(req))) {
-                res.status(HttpStatus.FORBIDDEN_403);
-                return res;
+            if (settings.getLoginRequired()) {
+                int perms = validateManipulation(req);
+                if (!validateRequest(req) || perms > 0) {
+                    res.status(HttpStatus.FORBIDDEN_403);
+                    return "DENIED";
+                }
+                res.status(HttpStatus.ACCEPTED_202);
+                return switch(perms) {
+                    case 1 -> "WRITE";
+                    case 2 -> "ADMIN";
+                    default -> "DENIED";
+                };
+            } else {
+                res.status(HttpStatus.ACCEPTED_202);
+                res.header("Cache-Control", "no-cache, no-store, max-age=0");
+                return "WRITE";
             }
-            res.status(HttpStatus.ACCEPTED_202);
-            res.header("Cache-Control", "no-cache, no-store, max-age=0");
-            return res;
         });
 
         get("/followup/:patientId", (req, res) -> {
@@ -207,7 +216,7 @@ public final class FhirSpark {
 
         put("/followup/:patientId", (req, res) -> {
             if (settings.getLoginRequired()
-                && (!validateRequest(req) || !validateManipulation(req))) {
+                && (!validateRequest(req) || validateManipulation(req) > 0)) {
                 res.status(HttpStatus.FORBIDDEN_403);
                 return res;
             }
@@ -221,7 +230,7 @@ public final class FhirSpark {
 
         delete("/followup/:patientId", (req, res) -> {
             if (settings.getLoginRequired()
-                && (!validateRequest(req) || !validateManipulation(req))) {
+                && (!validateRequest(req) || validateManipulation(req) > 0)) {
                 res.status(HttpStatus.FORBIDDEN_403);
                 return res;
             }
@@ -251,8 +260,10 @@ public final class FhirSpark {
             return res.body();
         });
     }
+
     /**
-     * Checks if the session id is authorized to access the clinical data of the patient.
+     * Checks if the session id is authorized to access the clinical data of the
+     * patient.
      *
      * @param req Incoming Java Spark Request
      * @return Boolean if the session if able to access the data
@@ -287,13 +298,14 @@ public final class FhirSpark {
     }
 
     /**
-     * Checks if the user is authorized to manipulate the clinical data of the patients in the requested study.
+     * Checks if the user is authorized to manipulate the clinical data of the
+     * patients in the requested study.
      *
      * @param req Incoming Java Spark Request
-     + @param studyId query parameter in the request
+     *            + @param studyId query parameter in the request
      * @return Boolean if the session is able to access the data
      */
-    private static boolean validateManipulation(Request req) {
+    private static int validateManipulation(Request req) {
         String requestedPatientId = req.params(":patientId");
         String requestedStudyId = req.queryParams("studyId");
         String userRoles = req.headers("X-USERROLES");
@@ -301,12 +313,12 @@ public final class FhirSpark {
 
         System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         System.out.println("Manipulation permission request:\nfrom user: " + userLoginName + ", for patientId: "
-            + requestedPatientId + "\nfound header X-USERROLES: " + userRoles
-            + "\nfound query parameter studyId: " + requestedStudyId);
+                + requestedPatientId + "\nfound header X-USERROLES: " + userRoles
+                + "\nfound query parameter studyId: " + requestedStudyId);
 
         if (userRoles == null || userRoles.isEmpty() || requestedStudyId == null || requestedStudyId.isEmpty()) {
             System.out.println("Incoming user roles or studyId are null or empty - returning false\n");
-            return false;
+            return 0;
         }
 
         ArrayList<String> roleList = new ArrayList<>();
@@ -317,14 +329,21 @@ public final class FhirSpark {
         }
 
         for (String s : roleList) {
+            if ((requestedStudyId != null && ("ADMIN_" + requestedStudyId).matches(s))) {
+                System.out.println("admin permission granted with role: " + s + "\n");
+                return 2;
+            }
+        }
+
+        for (String s : roleList) {
             if ((requestedStudyId != null && requestedStudyId.matches(s)) || s.equals(requestedPatientId)) {
                 System.out.println("permission granted with role: " + s + "\n");
-                return true;
+                return 1;
             }
         }
 
         System.out.println("no matching role could be found - returning false\n");
-        return false;
+        return 0;
 
     }
 
